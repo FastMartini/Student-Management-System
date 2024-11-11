@@ -6,8 +6,32 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class db_function {
+    // Capitalizes first letter
+    public static String capitalizeName(String name) {
+        if (name == null || name.isEmpty()) {
+            return name; // Return as-is if it's null or empty
+        }
+        return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
+    }
+
+    // Password validation method
+    public static boolean isValidPassword(String password) {
+        // Password should be at least 8 characters, contain an uppercase letter, lowercase letter, number, and special character
+        String passwordPattern = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
+        return password.matches(passwordPattern);
+    }
     // This method returns true if registration is successful and false otherwise.
     public static boolean registerStudent(Connection conn, String firstName, String lastName, String username, String password) {
+
+        // Capitalize first and last names
+        firstName = capitalizeName(firstName);
+        lastName = capitalizeName(lastName);
+
+        // Check if password meets security requirements
+        if (!isValidPassword(password)) {
+            System.out.println("Password must be at least 8 characters long and contain an uppercase letter, a lowercase letter, a number, and a special character.");
+            return false;
+        }
         // Hashes the password
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
         // defines an INSERT query.
